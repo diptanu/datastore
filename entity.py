@@ -60,4 +60,4 @@ class Entity(object):
         '''
         for example data_records_func = {'arv':'latest', 'num_patients':'sum'}
         '''
-        return DataBaseBackend().get_data_records(self, data_records_func, asof)
+        return DataBaseBackend().get_data_records_aggregated(self, data_records_func, asof)
