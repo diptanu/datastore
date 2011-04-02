@@ -21,21 +21,20 @@ class DataBaseBackend(object):
     def save(self, document, obj):
         document.store(self.database)
         return obj
-        
-    def save_datarecord(self, data, obj):
-        data['created_at'] = DateTimeField()._to_json(datetime.datetime.now())
-        data['reported_at'] = DateTimeField()._to_json(obj.reported_at)
-        uuid, rev_id = self.database.save(data)
-        setattr(obj, "uuid", uuid)
-        return obj
 
-    def save_entity(self, obj):
-        created_at = DateTimeField()._to_json(datetime.datetime.now())
-        setattr(obj, 'created_at', created_at)
-        uuid, rev_id = self.database.save(obj.__dict__)
-        setattr(obj, "uuid", uuid)
-        return obj
+    def get_data_records_type(self, entity):
+        rows = self.database.view('_design/aggregation1/_view/data_types1', group=True)
+        value = None
+        for row in rows:
+            if row.key == entity.uuid:
+                value = row.value
+                break
+            
+        return value
         
+    def get_data_records(self, entity, data_records_func, asof):
+        return entity
+    
     def get(self, uuid, document):
         return document.load(self.database, uuid)
         

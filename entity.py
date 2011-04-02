@@ -35,8 +35,8 @@ class Entity(object):
         document = EntityDocument(id=id, geoname = self.geoname, geocode = self.geocode, unique_name = self.unique_name, aggregation_tree = self.aggregation_tree)
         return DataBaseBackend().save(document, self)
         
-    def submit_datarecord(self, record_dict, created_at):
-        data_record = DataRecord(self.uuid, record_dict, created_at)
+    def submit_datarecord(self, record_dict, reported_at):
+        data_record = DataRecord(self.uuid, record_dict, reported_at)
         return data_record
 
         
@@ -50,9 +50,14 @@ class Entity(object):
     def revalidate_datarecord(self,uid):
         pass
 
+    def get_data_records_types(self):
+        return DataBaseBackend().get_data_records_type(self)
+    
+    def current_state(self, data_records_func):
+        return self.state(data_records_func)
 
-    def current_state(self):
-        return self.state(None)
-
-    def state(self, asof=None):
-        pass
+    def state(self, data_records_func, asof = datetime.datetime.now()):
+        '''
+        for example data_records_func = {'arv':'latest', 'num_patients':'sum'}
+        '''
+        return DataBaseBackend().get_data_records(self, data_records_func, asof)

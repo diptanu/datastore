@@ -1,6 +1,6 @@
 import datetime
 
-from couchdb.mapping import Document, TextField, DictField, DateTimeField, ListField, Mapping
+from couchdb.mapping import Document, TextField, DictField, DateTimeField, ListField, Mapping, ViewField
 
 class EntityDocument(Document):
     
@@ -11,6 +11,7 @@ class EntityDocument(Document):
     created_at = DateTimeField(default = datetime.datetime.now())
 
 
+from mapreduce import map_fun, sum_fun
 class DataRecordDocument(Document):
     
     for_entity_uuid = TextField()
@@ -20,4 +21,7 @@ class DataRecordDocument(Document):
             type = TextField()))
     reported_at = DateTimeField()
     created_at = DateTimeField(default = datetime.datetime.now())
+    by_sum = ViewField('general', map_fun, sum_fun, name="test_sum", language="python")
+
+
 

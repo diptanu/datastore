@@ -28,7 +28,7 @@ class TestEntity(unittest.TestCase):
         entity = Entity(geocode = "1234", geoname = "Accra", unique_name = "Kajelo CHPS")
         entity.save()
 
-        data_record = entity.submit_datarecord(record_dict = {'name':'arv', 'value': '40', 'type':'int'}, created_at = datetime.datetime.now())
+        data_record = entity.submit_datarecord(record_dict = {'name':'arv', 'value': '40', 'type':'int'}, reported_at = datetime.datetime.now())
         data_record.save()
         self.assertEqual(data_record.for_entity_uuid, entity.uuid)
 
@@ -36,7 +36,7 @@ class TestEntity(unittest.TestCase):
         entity = Entity(geocode = "1234", geoname = "Accra", unique_name = "Kajelo CHPS")
         entity.save()
 
-        data_record = entity.submit_datarecord(record_dict = {'name':'arv', 'value': '40', 'type':'int'}, created_at = datetime.datetime.now())
+        data_record = entity.submit_datarecord(record_dict = {'name':'arv', 'value': '40', 'type':'int'}, reported_at = datetime.datetime.now())
         data_record.save()
         self.assertEqual(data_record.reported_at.date(), datetime.datetime.now().date())
         
@@ -47,3 +47,31 @@ class TestEntity(unittest.TestCase):
         
         loaded_entity = query.get(uuid=entity.uuid)
         self.assertEqual(loaded_entity.aggregation_tree['org_chart'], ["CEO", "Architect", "Developer"])
+
+    def test_discover_data_types_of_the_datarecords(self):
+        entity = Entity(geocode = "1234", geoname = "Gulu", unique_name = "Ashianti CHPS")
+        entity.save()
+        
+        data_record = entity.submit_datarecord(record_dict = {'name':'arv', 'value': '12', 'type':'int'}, reported_at = datetime.date(2011,03,01))
+        data_record.save()
+        data_record = entity.submit_datarecord(record_dict = {'name':'patients', 'value': '1', 'type':'int'}, reported_at = datetime.date(2011,03,03))
+        data_record.save()
+        
+        data_types = entity.get_data_records_types()
+        self.assertEqual(data_types, {'patients': "int", 'arv': "int"})
+        
+
+    # def test_entity_state(self):
+    #     entity = Entity(geocode = "9876", geoname = "Gulu", unique_name = "Ashianti")
+    #     entity.save()
+        
+    #     data_record = entity.submit_datarecord(record_dict = {'name':'arv', 'value': '12', 'type':'int'}, reported_at = datetime.date(2011,03,01))
+    #     data_record = entity.submit_datarecord(record_dict = {'name':'arv', 'value': '1', 'type':'int'}, reported_at = datetime.date(2011,03,13))
+    #     data_record.save()
+    #     data_record = entity.submit_datarecord(record_dict = {'name':'patients', 'value': '1', 'type':'int'}, reported_at = datetime.date(2011,03,03))
+    #     data_record.save()
+        
+    #     entity_state = entity.state({'arv':'latest', 'patient':'sum'})
+        
+        
+        
