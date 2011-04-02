@@ -32,7 +32,7 @@ class Entity(object):
                 
     def save(self):
         id = self.uuid = uuid4().hex
-        document = EntityDocument(id=id, geoname = self.geoname, unique_name = self.unique_name, aggregation_tree = self.aggregation_tree)
+        document = EntityDocument(id=id, geoname = self.geoname, geocode = self.geocode, unique_name = self.unique_name, aggregation_tree = self.aggregation_tree)
         return DataBaseBackend().save(document, self)
         
     def submit_datarecord(self, record_dict, created_at):

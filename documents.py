@@ -13,7 +13,7 @@ class EntityDocument(Document):
 
 class DataRecordDocument(Document):
     
-    for_entity_id = TextField()
+    for_entity_uuid = TextField()
     data = DictField()
     reported_at = DateTimeField()
     created_at = DateTimeField(default = datetime.datetime.now())
