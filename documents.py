@@ -1,6 +1,6 @@
 import datetime
 
-from couchdb.mapping import Document, TextField, DictField, DateTimeField, ListField
+from couchdb.mapping import Document, TextField, DictField, DateTimeField, ListField, Mapping
 
 class EntityDocument(Document):
     
@@ -14,7 +14,10 @@ class EntityDocument(Document):
 class DataRecordDocument(Document):
     
     for_entity_uuid = TextField()
-    data = DictField()
+    data = DictField(Mapping.build(
+            name = TextField(),
+            value = TextField(),
+            type = TextField()))
     reported_at = DateTimeField()
     created_at = DateTimeField(default = datetime.datetime.now())
 

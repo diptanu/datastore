@@ -28,7 +28,7 @@ class TestEntity(unittest.TestCase):
         entity = Entity(geocode = "1234", geoname = "Accra", unique_name = "Kajelo CHPS")
         entity.save()
 
-        data_record = entity.submit_datarecord(record_dict = {'arv': '40'}, created_at = datetime.datetime.now())
+        data_record = entity.submit_datarecord(record_dict = {'name':'arv', 'value': '40', 'type':'int'}, created_at = datetime.datetime.now())
         data_record.save()
         self.assertEqual(data_record.for_entity_uuid, entity.uuid)
 
@@ -36,7 +36,7 @@ class TestEntity(unittest.TestCase):
         entity = Entity(geocode = "1234", geoname = "Accra", unique_name = "Kajelo CHPS")
         entity.save()
 
-        data_record = entity.submit_datarecord(record_dict = {'arv': '40'}, created_at = datetime.datetime.now())
+        data_record = entity.submit_datarecord(record_dict = {'name':'arv', 'value': '40', 'type':'int'}, created_at = datetime.datetime.now())
         data_record.save()
         self.assertEqual(data_record.reported_at.date(), datetime.datetime.now().date())
         
