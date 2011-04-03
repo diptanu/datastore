@@ -1,11 +1,16 @@
-from datastore.entity import Entity
+from datastore.entity import Entity, DataRecord
 from datastore.backend import DataBaseBackend
-from datastore.documents import EntityDocument
+from datastore.documents import EntityDocument, DataRecordDocument
 
 def get(uuid):
     document = DataBaseBackend().get(uuid, EntityDocument())
     entity = Entity(geocode = document.geocode, geoname = document.geoname, unique_name = document.unique_name, aggregation_tree = document.aggregation_tree, uuid = document.id)
     return entity
+
+def get_data_record(uuid):
+    document = DataBaseBackend().get(uuid, DataRecordDocument())
+    datarecord = DataRecord(for_entity_uuid = document.for_entity_uuid, record_dict = document.data, reported_at = document.reported_at, uuid = document.id, voided = document.voided)
+    return datarecord
     
 def entities_for_ids(uids):
     ''' return list of entities for given uids '''

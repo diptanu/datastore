@@ -5,9 +5,9 @@ from couchdb.http import ResourceNotFound
 from couchdb import Server
 from couchdb.mapping import DateTimeField
 
-DATABASE_NAME = 'mangrove_test'
+DATABASE_NAME = 'mangrove'
 SERVER_HOST = 'http://0.0.0.0:5984'
-DESIGN_DOCUMENT_NAME = 'aggregate'
+DESIGN_DOCUMENT_NAME = 'aggregation'
 VIEWS = {'latest': 'latest', 'data_types': 'data_types', 'sum':'sum'}
 
 #FIXME: Duplicated it for the sake of the spike
@@ -24,7 +24,7 @@ class DataBaseBackend(object):
     def save(self, document, obj):
         document.store(self.database)
         return obj
-
+    
     def get_data_records_type(self, entity):
         view_url = '_design/'+ DESIGN_DOCUMENT_NAME +'/_view/' + VIEWS['data_types']
         rows = self.database.view(view_url, group=True, group_level = 1).rows

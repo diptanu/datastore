@@ -11,7 +11,6 @@ class EntityDocument(Document):
     created_at = DateTimeField(default = datetime.datetime.now())
 
 
-from mapreduce import map_fun, sum_fun
 class DataRecordDocument(Document):
     
     for_entity_uuid = TextField()

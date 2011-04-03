@@ -11,16 +11,31 @@ from uuid import uuid4
 
 class DataRecord(object):
 
-    def __init__(self, for_entity_uuid, record_dict, reported_at, uuid = None):
+    def __init__(self, for_entity_uuid, record_dict, reported_at, uuid = None, voided = False):
         setattr(self, 'for_entity_uuid', for_entity_uuid)
         setattr(self, 'reported_at', reported_at)
         setattr(self, 'data', record_dict)
         setattr(self, 'uuid', uuid)
+        setattr(self, 'voided', voided)
 
     def save(self):
-        id = self.uuid = uuid4().hex
-        document = DataRecordDocument(for_entity_uuid = self.for_entity_uuid, reported_at = self.reported_at, data = self.data)
+        self.uuid = id = self.uuid if self.uuid is not None else  uuid4().hex
+        document = DataRecordDocument(for_entity_uuid = self.for_entity_uuid, reported_at = self.reported_at, data = self.data, id = id, voided = self.voided)
         return DataBaseBackend().save(document, self)
+
+    def update(self):
+        document = DataBaseBackend().get(self.uuid, DataRecordDocument())
+        self._updateattr(document)
+        DataBaseBackend().save(document, self)
+        return self
+
+    def invalidate(self):
+        self.voided = True
+        return self.update()
+
+    def _updateattr(self, document):
+        document.voided = self.voided
+        document.data = self.data
 
 class Entity(object):
     
@@ -31,7 +46,7 @@ class Entity(object):
             setattr(self, key, value)
                 
     def save(self):
-        id = self.uuid = uuid4().hex
+        self.uuid = id = self.uuid if self.uuid is not None else uuid4().hex
         document = EntityDocument(id=id, geoname = self.geoname, geocode = self.geocode, unique_name = self.unique_name, aggregation_tree = self.aggregation_tree)
         return DataBaseBackend().save(document, self)
         
