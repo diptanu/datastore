@@ -66,6 +66,7 @@ class TestEntity(unittest.TestCase):
         entity.save()
         
         data_record = entity.submit_datarecord(record_dict = {'name':'arv', 'value': '12', 'type':'int'}, reported_at = datetime.date(2011,03,01))
+        data_record.save()
         data_record = entity.submit_datarecord(record_dict = {'name':'arv', 'value': '1', 'type':'int'}, reported_at = datetime.date(2011,03,13))
         data_record.save()
         data_record = entity.submit_datarecord(record_dict = {'name':'patients', 'value': '1', 'type':'int'}, reported_at = datetime.date(2011,03,03))
@@ -75,4 +76,21 @@ class TestEntity(unittest.TestCase):
         
         entity_state = entity.state({'arv':'latest', 'patients':'sum'})
         self.assertEqual(entity_state, {'patients':16, 'arv':1})
+
+
+    def test_entity_state_at_a_given_time(self):
+        entity = Entity(geocode = "9876", geoname = "Gulu", unique_name = "Ashianti")
+        entity.save()
+        
+        data_record = entity.submit_datarecord(record_dict = {'name':'arv', 'value': '12', 'type':'int'}, reported_at = datetime.date(2011,03,01))
+        data_record.save()
+        data_record = entity.submit_datarecord(record_dict = {'name':'patients', 'value': '1', 'type':'int'}, reported_at = datetime.date(2011,03,03))
+        data_record.save()
+        data_record = entity.submit_datarecord(record_dict = {'name':'arv', 'value': '1', 'type':'int'}, reported_at = datetime.date(2011,03,13))
+        data_record.save()
+        data_record = entity.submit_datarecord(record_dict = {'name':'patients', 'value': '15', 'type':'int'}, reported_at = datetime.date(2011,03,14))
+        data_record.save()
+        
+        entity_state = entity.state({'arv':'latest', 'patients':'sum'}, asof = datetime.date(2011,03,05))
+        self.assertEqual(entity_state, {'patients':1, 'arv':12})
         

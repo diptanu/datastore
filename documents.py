@@ -1,6 +1,6 @@
 import datetime
 
-from couchdb.mapping import Document, TextField, DictField, DateTimeField, ListField, Mapping, ViewField
+from couchdb.mapping import Document, TextField, DictField, DateTimeField, ListField, Mapping, BooleanField
 
 class EntityDocument(Document):
     
@@ -20,8 +20,8 @@ class DataRecordDocument(Document):
             value = TextField(),
             type = TextField()))
     reported_at = DateTimeField()
+    voided = BooleanField(default = False)
     created_at = DateTimeField(default = datetime.datetime.now())
-    by_sum = ViewField('general', map_fun, sum_fun, name="test_sum", language="python")
 
 
 

@@ -1,12 +1,14 @@
 import datetime
+from time import mktime
 
 from couchdb.http import ResourceNotFound
 from couchdb import Server
 from couchdb.mapping import DateTimeField
 
-DATABASE_NAME = 'mangrove'
+DATABASE_NAME = 'mangrove_test'
 SERVER_HOST = 'http://0.0.0.0:5984'
-VIEWS = {'latest': 'latest1', 'data_types': 'data_types1', 'sum':'sum1'}
+DESIGN_DOCUMENT_NAME = 'aggregate'
+VIEWS = {'latest': 'latest', 'data_types': 'data_types', 'sum':'sum'}
 
 #FIXME: Duplicated it for the sake of the spike
 class DataBaseBackend(object):
@@ -24,15 +26,16 @@ class DataBaseBackend(object):
         return obj
 
     def get_data_records_type(self, entity):
-        view_url = '_design/aggregation1/_view/' + VIEWS['data_types']
-        rows = self.database.view(view_url, group=True)
+        view_url = '_design/'+ DESIGN_DOCUMENT_NAME +'/_view/' + VIEWS['data_types']
+        rows = self.database.view(view_url, group=True, group_level = 1).rows
         return self.filter_rows_by_uuid(entity.uuid, rows)
 
     def get_data_records_aggregated(self, entity, data_records_func, asof):
         aggregated_result = {}
+        endkey = [entity.uuid, int(mktime(asof.timetuple())) * 1000]
         for name, aggregation_type in data_records_func.items():
-            view_url = '_design/aggregation1/_view/' + VIEWS[aggregation_type]
-            rows = self.database.view(view_url, group=True)
+            view_url = '_design/' + DESIGN_DOCUMENT_NAME + '/_view/' + VIEWS[aggregation_type]
+            rows = self.database.view(view_url, group=True, group_level = 1, endkey = endkey).rows
             data = self.filter_rows_by_uuid(entity.uuid, rows)
             aggregated_result[name] = data[name] if name in data.keys() else None
             
@@ -41,15 +44,13 @@ class DataBaseBackend(object):
     def filter_rows_by_uuid(self, uuid, rows):
         value = None
         for row in rows:
-            if row.key == uuid:
+            if row.key[0] == uuid:
                 value = row.value
                 break
+        
         return value
         
 
-    def get_data_records(self, entity, data_records_func, asof):
-        return entity
-    
     def get(self, uuid, document):
         return document.load(self.database, uuid)
         
