@@ -1,0 +1,17 @@
+This is the low-level DataStore API implementation
+
+Installation
+
+* Create a virtualenv: virtualenv --no-site-packages ve 
+  Activate the virtualenv: source ve/bin/activate
+
+* Install the dependencies from the datastore/requirements.txt: pip install -r requirements.txt
+
+* Install couchdb
+
+* Navigate to futon and create a new database called "mangrove"
+* Create a design document in the database called "aggregation"
+* Create three views in the design document: sum, latest and data_types [This has to be automated probably in a metaclass of the DatabaseBackend class]
+* The JavaScript code for the views is in the mapreduce.py. There are python map-reduce functions too in the same file, but because of the whitespace issue they acted funny, so I had to use JavaScript for the map reduce functions.
+* The map function of the three views are same. The reduce functions are different.
+* Once that is done run nosetests from the root of the datastore directory.
