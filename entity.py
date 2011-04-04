@@ -1,6 +1,6 @@
 import datetime
 
-from backend import DataBaseBackend
+from backend import DatabaseBackend
 from documents import EntityDocument, DataRecordDocument
 from datarecord import DataRecord
 from uuid import uuid4
@@ -21,7 +21,7 @@ class Entity(object):
                                   geocode = self.geocode, 
                                   unique_name = self.unique_name, 
                                   aggregation_tree = self.aggregation_tree)
-        return DataBaseBackend().save(document, self)
+        return DatabaseBackend().save(document, self)
         
     def submit_datarecord(self, record_dict, reported_at):
         data_record = DataRecord(self.uuid, record_dict, reported_at)
@@ -39,7 +39,7 @@ class Entity(object):
         pass
 
     def get_data_records_types(self):
-        return DataBaseBackend().get_data_records_type(self)
+        return DatabaseBackend().get_data_records_type(self)
     
     def current_state(self, data_records_func):
         return self.state(data_records_func)
@@ -48,4 +48,4 @@ class Entity(object):
         '''
         for example data_records_func = {'arv':'latest', 'num_patients':'sum'}
         '''
-        return DataBaseBackend().get_data_records_aggregated(self, data_records_func, asof)
+        return DatabaseBackend().get_data_records_aggregated(self, data_records_func, asof)

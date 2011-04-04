@@ -1,7 +1,7 @@
 import utils
 
 from documents import DataRecordDocument
-from backend import DataBaseBackend
+from backend import DatabaseBackend
 from uuid import uuid4
 
 class DataRecord(object):
@@ -20,12 +20,12 @@ class DataRecord(object):
                                       data = self.data, id = id,
                                       voided = self.voided)
         
-        return DataBaseBackend().save(document, self)
+        return DatabaseBackend().save(document, self)
 
     def update(self):
-        document = DataBaseBackend().get(self.uuid, DataRecordDocument())
+        document = DatabaseBackend().get(self.uuid, DataRecordDocument())
         self._updateattr(document)
-        DataBaseBackend().save(document, self)
+        DatabaseBackend().save(document, self)
         return self
 
     def invalidate(self):

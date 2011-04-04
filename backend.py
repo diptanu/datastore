@@ -11,7 +11,7 @@ DESIGN_DOCUMENT_NAME = 'aggregation'
 VIEWS = {'latest': 'latest', 'data_types': 'data_types', 'sum':'sum'}
 
 #FIXME: Duplicated it for the sake of the spike
-class DataBaseBackend(object):
+class DatabaseBackend(object):
 
     def __init__(self, server=SERVER_HOST, database_name = DATABASE_NAME, *args, **kwargs):
         self.url = server
