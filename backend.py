@@ -26,22 +26,21 @@ class DataBaseBackend(object):
         return obj
     
     def get_data_records_type(self, entity):
-        view_url = '_design/'+ DESIGN_DOCUMENT_NAME +'/_view/' + VIEWS['data_types']
-        rows = self.database.view(view_url, group=True, group_level = 1).rows
-        return self.filter_rows_by_uuid(entity.uuid, rows)
+        endkey = [entity.uuid, int(mktime(datetime.datetime.now().timetuple())) * 1000]
+        return self.filter_rows_by_uuid(entity.uuid,'data_types', endkey = endkey)
 
     def get_data_records_aggregated(self, entity, data_records_func, asof):
         aggregated_result = {}
         endkey = [entity.uuid, int(mktime(asof.timetuple())) * 1000]
         for name, aggregation_type in data_records_func.items():
-            view_url = '_design/' + DESIGN_DOCUMENT_NAME + '/_view/' + VIEWS[aggregation_type]
-            rows = self.database.view(view_url, group=True, group_level = 1, endkey = endkey).rows
-            data = self.filter_rows_by_uuid(entity.uuid, rows)
+            data = self.filter_rows_by_uuid(entity.uuid, aggregation_type, endkey)
             aggregated_result[name] = data[name] if name in data.keys() else None
             
         return aggregated_result
 
-    def filter_rows_by_uuid(self, uuid, rows):
+    def filter_rows_by_uuid(self, uuid, aggregation_type, endkey = None):
+        view_url = '_design/' + DESIGN_DOCUMENT_NAME + '/_view/' + VIEWS[aggregation_type]
+        rows = self.database.view(view_url, group=True, group_level = 1, endkey = endkey).rows
         value = None
         for row in rows:
             if row.key[0] == uuid:

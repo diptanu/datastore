@@ -1,4 +1,5 @@
-from datastore.entity import Entity, DataRecord
+from datastore.entity import Entity
+from datastore.datarecord import DataRecord
 from datastore.backend import DataBaseBackend
 from datastore.documents import EntityDocument, DataRecordDocument
 
